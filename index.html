@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>Не беру проекты</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100dvh;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif;
+      background: linear-gradient(135deg, #5451E7, #1A1534, #0F1020);
+      background-size: 400% 400%;
+      animation: gradientFlow 24s ease-in-out infinite;
+      color: #f5f5f5;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    @keyframes gradientFlow {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .wrapper {
+      max-width: 960px;
+      width: 100%;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+      transform: translateY(-8vh); /* mobile default */
+    }
+
+    .title {
+      font-size: clamp(26px, 4vw, 38px);
+      font-weight: 500;
+      opacity: 0.9;
+      text-wrap: balance;
+    }
+
+    .reason {
+      font-size: clamp(34px, 7vw, 62px);
+      font-weight: 700;
+      margin-top: 8px;
+      text-wrap: balance;
+    }
+
+    .subtitle {
+      font-size: 16px;
+      opacity: 0.85;
+      line-height: 1.5;
+    }
+
+    .timer {
+      margin-top: 8px;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: 0.06em;
+      font-size: 20px;
+      font-weight: 600;
+    }
+
+    .footer {
+      margin-top: 32px;
+      font-size: 13px;
+      opacity: 0.6;
+    }
+    .footer a {
+      color: #ff8d6b;
+      text-decoration: none;
+      border-bottom: 1px dashed rgba(255,141,107,0.5);
+    }
+
+    /* Desktop adjustment: lower text slightly */
+    @media (min-width: 481px) {
+      .wrapper {
+        transform: translateY(-4vh); /* lowered for desktop */
+      }
+    }
+
+    /* MOBILE FIXES */
+    @media (max-width: 480px) {
+      .wrapper { transform: translateY(-8vh); gap: 24px; }
+      .title { font-size: 22px; padding: 0 8px; }
+      .reason { font-size: 28px; padding: 0 8px; }
+      .subtitle { font-size: 14px; padding: 0 16px; }
+      .timer { font-size: 18px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <div>
+      <div class="title">Не беру проекты, потому&nbsp;что</div>
+      <div class="reason" id="reasonText">скоро&nbsp;новый&nbsp;год</div>
+    </div>
+
+    <div>
+      <div class="subtitle">Причина изменится через:</div>
+      <div class="timer" id="timer"></div>
+    </div>
+
+    <div class="footer">
+      Но если очень надо — можно написать →
+      <a href="mailto:you@example.com">you@example.com</a>
+    </div>
+  </div>
+
+  <script>
+    const reasonsByMonth = {
+      0:"надо прийти в себя после праздников",
+      1:"слишком короткий месяц, не успею",
+      2:"в&nbsp;марте я занимаюсь только своими проектами",
+      3:"апрель — месяц доделать старое",
+      4:"в&nbsp;мае все и так ничего не делают",
+      5:"лето, хочется на&nbsp;улицу",
+      6:"в&nbsp;июле я&nbsp;обещал себе отдых",
+      7:"в&nbsp;августе я&nbsp;делаю вид, что в отпуске",
+      8:"в&nbsp;сентябре я&nbsp;оптимизирую процессы",
+      9:"в&nbsp;октябре я перевожу хаос в порядок",
+      10:"в&nbsp;ноябре я готовлюсь к следующему году",
+      11:"скоро&nbsp;новый&nbsp;год"
+    };
+
+    const reasonEl = document.getElementById("reasonText");
+    const timerEl = document.getElementById("timer");
+
+    function getNextMonthStart(now) {
+      const y = now.getFullYear();
+      const m = now.getMonth();
+      return new Date(m===11?y+1:y, (m+1)%12, 1, 0, 0, 0);
+    }
+
+    function pad(n) { return String(n).padStart(2,"0"); }
+
+    function formatTimer(ms) {
+      const s = Math.floor(ms/1000);
+      const d = Math.floor(s/86400);
+      const h = Math.floor((s%86400)/3600);
+      const m = Math.floor((s%3600)/60);
+      const sec = s%60;
+      return `${pad(d)} д ${pad(h)}:${pad(m)}:${pad(sec)}`;
+    }
+
+    function tick() {
+      const now = new Date();
+      reasonEl.innerHTML = reasonsByMonth[now.getMonth()];
+      const diff = getNextMonthStart(now) - now;
+      timerEl.textContent = formatTimer(diff);
+    }
+
+    tick();
+    setInterval(tick,1000);
+  </script>
+</body>
+</html>
